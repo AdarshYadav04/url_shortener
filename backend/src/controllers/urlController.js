@@ -33,7 +33,8 @@ const redirectUrl=async(req,res)=>{
     const url = await urlModel.findOne({ shortId });
     if (!url) return res.status(404).json({ error: 'URL not found' });
 
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const rawIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ip =rawIp?.split(',')[0]?.trim() || "103.118.167.168";
     const location = getLocationFromIP(ip);
 
     url.clicks.push({ ip, location });
