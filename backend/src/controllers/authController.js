@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import CryptoJS from "crypto-js";
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', 
-  sameSite: 'Lax', 
-  maxAge: 24 * 60 * 60 * 1000, 
+  secure: isProduction,
+  sameSite: isProduction ? 'None' : 'Lax', // ❗ 'None' required for cross-origin
+  maxAge: 24 * 60 * 60 * 1000
 };
 
 const registerUser = async (req, res) => {
