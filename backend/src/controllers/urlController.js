@@ -37,7 +37,6 @@ const redirectUrl=async(req,res)=>{
     const ip =rawIp?.split(',')[0]?.trim()
     const location = await getLocationFromIP(ip);
     
-
     url.clicks.push({ ip, location });
     await url.save();
 
