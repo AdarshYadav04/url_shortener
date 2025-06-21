@@ -35,7 +35,7 @@ const redirectUrl=async(req,res)=>{
 
     const rawIp =req.headers['cg-connection-ip'] || req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
     const ip =rawIp?.split(',')[0]?.trim()
-    const location = getLocationFromIP(ip);
+    const location = await getLocationFromIP(ip);
     
 
     url.clicks.push({ ip, location });
