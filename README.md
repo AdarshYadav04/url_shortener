@@ -1,4 +1,4 @@
-# url_shortner
+# url_shortener
 A full-stack URL shortening application built using Express.js, MongoDB, and React.js, featuring user authentication, link analytics, and a modern dashboard UI.
 
 <br>
