@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AuthModal from '../AuthModal/AuthModal.jsx';
 import './Navbar.css';
@@ -13,6 +13,7 @@ const Navbar = () => {
   const location = useLocation();
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
+  const navigate=useNavigate()
 
 
   useEffect(() => {
@@ -22,7 +23,6 @@ const Navbar = () => {
           credentials: 'include'
         });
         if (res.ok) {
-
           const data = await res.json();
           setUser(data);
         } else {
@@ -66,6 +66,7 @@ const Navbar = () => {
       setUser(null);
       setToken(false);
       setShowUserMenu(false);
+      navigate("/")
     } catch (err) {
       console.error('Logout error:', err);
     }

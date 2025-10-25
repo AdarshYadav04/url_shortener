@@ -6,7 +6,7 @@ import axios from 'axios';
 import './Home.css';
 
 const Home = () => {
-  const { token } = useAuth(); // token not needed if using cookie-based auth
+  const { token } = useAuth(); 
   const navigate = useNavigate();
 
   const [originalUrl, setOriginalUrl] = useState('');
