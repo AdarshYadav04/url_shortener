@@ -2,8 +2,9 @@ import { useState } from 'react';
 import axios from 'axios';
 import './UrlCard.css';
 
-const UrlCard = ({ url }) => {
+const UrlCard = ({ url,onDelete }) => {
   const [copied, setCopied] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -17,6 +18,24 @@ const UrlCard = ({ url }) => {
 
   const handleVisit = () => {
     window.open(`http://localhost:8080/api/url/${url.shortId}`, '_blank');
+  };
+
+  const handleDelete =async () => {
+
+    try {
+      const axiosConfig = {
+        withCredentials: true,
+      };
+      const res=await axios.delete(`http://localhost:8080/api/url/${url.shortId}`,axiosConfig)
+      if (res.status === 200) {
+        onDelete(url.shortId); 
+        
+      }
+    
+    } catch (error) {
+      console.log(error)
+    }finally{setShowDeleteConfirm(false)}
+    
   };
 
   const formatDate = (dateString) => {
@@ -66,6 +85,15 @@ const UrlCard = ({ url }) => {
             <span className="stat-value">{url.clickCount}</span>
             <span className="stat-label">Clicks</span>
           </div>
+          <button 
+            className="delete-button"
+            onClick={() => setShowDeleteConfirm(true)}
+            title="Delete link"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14zM10 11v6M14 11v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
       
@@ -91,6 +119,28 @@ const UrlCard = ({ url }) => {
           </div>
         )}
       </div>
+      {showDeleteConfirm && (
+        <div className="delete-confirm-modal">
+          <div className="delete-confirm-content">
+            <h4>Delete Link?</h4>
+            <p>Are you sure you want to delete this shortened link? This action cannot be undone.</p>
+            <div className="delete-confirm-actions">
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

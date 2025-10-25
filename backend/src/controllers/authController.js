@@ -4,7 +4,6 @@ import validator from "validator";
 import CryptoJS from "crypto-js";
 
 const isProduction = process.env.NODE_ENV === 'production';
-
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction,

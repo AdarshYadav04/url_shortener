@@ -28,14 +28,29 @@ const Dashboard = () => {
           urls: dashboardRes.data.links,
         });
       } catch (err) {
-        console.error('Failed to load data:', err);
+        console.error('Failed to load data:');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [setStats]);
+
+  const handleDeleteUrl = (shortIdToRemove) => {
+  setStats((prevStats) => {
+    const updatedUrls = prevStats.urls.filter((url) => url.shortId !== shortIdToRemove);
+    return {
+      ...prevStats,
+      urls: updatedUrls,
+      totalUrls: updatedUrls.length,
+      totalClicks: updatedUrls.reduce((sum, url) => sum + url.clickCount, 0),
+      topCountries: getTopCountries(updatedUrls),
+    };
+  });
+};
+
+  
 
   const getTopCountries = (links) => {
     const countryMap = {};
@@ -106,7 +121,7 @@ const Dashboard = () => {
             <>
               <div className="urls-list">
                 {currentUrls.map((url) => (
-                  <UrlCard key={url.shortId} url={url} />
+                  <UrlCard key={url.shortId} url={url} onDelete={handleDeleteUrl} />
                 ))}
               </div>
 
@@ -165,29 +180,40 @@ const StatCard = ({ label, value, iconType }) => (
 
 const TopCountriesCard = ({ countries }) => (
   <div className="stat-card countries-card">
-    <div className="stat-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-        <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    </div>
-    <div className="stat-content">
-      <div className="stat-label">Top Countries</div>
-      <div className="countries-list">
-        {countries.length > 0 ? (
-          countries.map((country) => (
-            <div key={country.country} className="country-item">
-              <span className="country-name">{country.country}</span>
-              <span className="country-count">{country.count}</span>
-            </div>
-          ))
-        ) : (
-          <span className="no-data">No data yet</span>
-        )}
-      </div>
+  <div className="stat-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+      <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  </div>
+  <div className="stat-content">
+    <div className="stat-label">Top Country</div>
+    <div className="countries-list">
+      {countries.length > 0 ? (
+        <div className="country-item">
+          <span className="country-name">
+            {
+              countries.reduce((top, country) =>
+                country.count > top.count ? country : top
+              ).country
+            }
+          </span>
+          <span className="country-count">
+            {
+              countries.reduce((top, country) =>
+                country.count > top.count ? country : top
+              ).count
+            }
+          </span>
+        </div>
+      ) : (
+        <span className="no-data">No data yet</span>
+      )}
     </div>
   </div>
+</div>
+
 );
 
 const EmptyState = () => (

@@ -73,5 +73,21 @@ const getDashboardData=async(req,res)=>{
 
 }
 
-export {shortenUrl,redirectUrl,getDashboardData}
+const deleteUrl = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const deletedUrl = await urlModel.findOneAndDelete({ shortId, user: req.user.id });
+
+    if (!deletedUrl) {
+      return res.status(404).json({ error: 'URL not found or not authorized to delete' });
+    }
+
+    res.status(200).json({ message: 'Short URL deleted successfully' });
+  } catch (err) {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
+export {shortenUrl,redirectUrl,getDashboardData,deleteUrl}
 
