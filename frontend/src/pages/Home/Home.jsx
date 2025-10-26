@@ -43,7 +43,7 @@ const Home = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        'http://localhost:8080/api/url/shorten',
+        'https://short-ly-2njz.onrender.com/api/url/shorten',
         { originalUrl },
         { withCredentials: true }
       );

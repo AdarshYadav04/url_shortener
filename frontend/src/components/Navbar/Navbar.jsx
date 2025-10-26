@@ -19,7 +19,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/user/profile', {
+        const res = await fetch('https://short-ly-2njz.onrender.com/api/user/profile', {
           credentials: 'include'
         });
         if (res.ok) {
@@ -59,7 +59,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:8080/api/auth/logout', {
+      await fetch('https://short-ly-2njz.onrender.com/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });

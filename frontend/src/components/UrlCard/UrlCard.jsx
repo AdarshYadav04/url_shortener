@@ -8,7 +8,7 @@ const UrlCard = ({ url,onDelete }) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`http://localhost:8080/api/url/${url.shortId}`);
+      await navigator.clipboard.writeText(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -17,7 +17,7 @@ const UrlCard = ({ url,onDelete }) => {
   };
 
   const handleVisit = () => {
-    window.open(`http://localhost:8080/api/url/${url.shortId}`, '_blank');
+    window.open(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`, '_blank');
   };
 
   const handleDelete =async () => {
@@ -26,7 +26,7 @@ const UrlCard = ({ url,onDelete }) => {
       const axiosConfig = {
         withCredentials: true,
       };
-      const res=await axios.delete(`http://localhost:8080/api/url/${url.shortId}`,axiosConfig)
+      const res=await axios.delete(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`,axiosConfig)
       if (res.status === 200) {
         onDelete(url.shortId); 
         

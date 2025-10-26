@@ -40,8 +40,8 @@ const AuthModal = ({ mode, onClose, onSwitchMode }) => {
       };
 
       const endpoint = mode === 'login'
-        ? 'http://localhost:8080/api/auth/login'
-        : 'http://localhost:8080/api/auth/register';
+        ? 'https://short-ly-2njz.onrender.com/api/auth/login'
+        : 'https://short-ly-2njz.onrender.com/api/auth/register';
 
       const { data } = await axios.post(endpoint, formData, config);
 

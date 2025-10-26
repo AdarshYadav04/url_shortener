@@ -17,10 +17,10 @@ const Dashboard = () => {
           withCredentials: true,
         };
 
-        const userRes = await axios.get('http://localhost:8080/api/user/profile', axiosConfig);
+        const userRes = await axios.get('https://short-ly-2njz.onrender.com/api/user/profile', axiosConfig);
         setUser(userRes.data);
 
-        const dashboardRes = await axios.get('http://localhost:8080/api/url/dashboard', axiosConfig);
+        const dashboardRes = await axios.get('https://short-ly-2njz.onrender.com/api/url/dashboard', axiosConfig);
         setStats({
           totalUrls: dashboardRes.data.totalLinks,
           totalClicks: dashboardRes.data.totalClicks,

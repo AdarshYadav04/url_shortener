@@ -8,7 +8,7 @@ const Protected = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/user/profile', {
+        const res = await fetch('https://short-ly-2njz.onrender.com/api/user/profile', {
           credentials: 'include',
         });
         if (res.ok) {
