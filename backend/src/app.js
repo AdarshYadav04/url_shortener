@@ -16,7 +16,7 @@ const app=express()
 //middleware
 app.use(express.json())
 app.use(helmet())
-app.use(cors({ origin: 'https://shortly-z5i6.onrender.com/', credentials: true }))
+app.use(cors({ origin: 'https://shortly-z5i6.onrender.com', credentials: true }))
 app.use(morgan('dev'))
 app.use(cookieParser())
 
