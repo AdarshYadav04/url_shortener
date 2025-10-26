@@ -57,7 +57,7 @@ const UrlCard = ({ url,onDelete }) => {
         <div className="url-info">
           <div className="short-url">
             <button className="short-url-link" onClick={handleVisit}>
-              {`http://localhost:8080/api/url/${url.shortId}`}
+              {`https://shortly-z5i6.onrender.com/api/url/${url.shortId}`}
             </button>
             <button 
               className={`copy-button ${copied ? 'copied' : ''}`}
