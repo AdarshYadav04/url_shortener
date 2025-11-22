@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import urlRouter from "./routes/urlRoute.js"
 import authRouter from "./routes/authRoute.js"
 import userRouter from "./routes/userRoute.js"
+import chatRouter from "./routes/chatRoute.js"
 
 
 // app config
@@ -35,6 +36,7 @@ app.use(limiter);
 app.use("/api/url",urlRouter)
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
+app.use("/api/bot",chatRouter)
 
 
 

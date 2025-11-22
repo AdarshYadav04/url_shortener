@@ -15,6 +15,16 @@ const Home = () => {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([
+    {
+      id: 1,
+      author: 'bot',
+      text: "Hi there! I'm the Short.ly assistant. Ask me anything about shortening links.",
+    },
+  ]);
 
   const validateUrl = (urlString) => {
     try {
@@ -77,6 +87,64 @@ const Home = () => {
 
   const handleDashboard = () => {
     navigate('/dashboard');
+  };
+
+  const handleChatToggle = () => {
+    setIsChatOpen((prev) => !prev);
+  };
+
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    const trimmed = chatMessage.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const timestamp = Date.now();
+
+    const userMessage = {
+      id: timestamp,
+      author: 'user',
+      text: trimmed,
+    };
+
+    // Add user message immediately
+    setChatHistory((prev) => [...prev, userMessage]);
+    setChatMessage('');
+    setChatLoading(true);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/bot/chat',
+        { question: trimmed },
+        { withCredentials: true }
+      );
+
+      // Extract the bot response from the API
+      console.log(response);
+      const botResponse = response.data?.answer || response.data?.response || response.data?.message || "I'm sorry, I couldn't process that request.";
+
+      const botMessage = {
+        id: timestamp + 1,
+        author: 'bot',
+        text: botResponse,
+      };
+
+      setChatHistory((prev) => [...prev, botMessage]);
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || err.message || "Sorry, I encountered an error. Please try again.";
+      
+      const botMessage = {
+        id: timestamp + 1,
+        author: 'bot',
+        text: errorMessage,
+      };
+
+      setChatHistory((prev) => [...prev, botMessage]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   return (
@@ -216,6 +284,84 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className={`chatbot-widget ${isChatOpen ? 'open' : ''}`}>
+        <button
+          className="chatbot-toggle"
+          onClick={handleChatToggle}
+          aria-expanded={isChatOpen}
+          aria-controls="chatbot-modal"
+          aria-label={isChatOpen ? 'Close chatbot' : 'Open chatbot'}
+        >
+          <span className={`chatbot-toggle-icon ${isChatOpen ? 'open' : ''}`} aria-hidden="true">
+            {isChatOpen ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M21 12a8.5 8.5 0 0 1-1.22 4.45.91.91 0 0 0-.11.44v3l-2.83-1.7a1 1 0 0 0-.51-.14 8.5 8.5 0 1 1 4.67-7.05Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </span>
+        </button>
+
+        {isChatOpen && (
+          <div className="chatbot-modal" id="chatbot-modal">
+            <div className="chatbot-header">
+              <div>
+                <p className="chatbot-title">Short.ly Assistant</p>
+                <span className="chatbot-status">Online</span>
+              </div>
+              <button
+                className="chatbot-close"
+                onClick={handleChatToggle}
+                aria-label="Close chatbot"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="chatbot-body">
+              <ul className="chatbot-messages">
+                {chatHistory.map((msg) => (
+                  <li key={msg.id} className={`message ${msg.author}`}>
+                    {msg.text}
+                  </li>
+                ))}
+                {chatLoading && (
+                  <li key="loading" className="message bot">
+                    <span className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            <form className="chatbot-input" onSubmit={handleChatSubmit}>
+              <input
+                type="text"
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                placeholder="Type your message..."
+                disabled={chatLoading}
+              />
+              <button type="submit" disabled={chatLoading || !chatMessage.trim()}>
+                {chatLoading ? 'Sending...' : 'Send'}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
 
       {showAuthModal && (
