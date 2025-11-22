@@ -116,7 +116,7 @@ const Home = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/bot/chat',
+        'https://short-ly-2njz.onrender.com/api/bot/chat',
         { question: trimmed },
         { withCredentials: true }
       );
