@@ -58,7 +58,7 @@ const ChangePasswordModal = ({ onClose }) => {
       };
 
       const response = await axios.put(
-        'http://localhost:8080/api/user/password',
+        'https://short-ly-2njz.onrender.com/api/user/password',
         {
           oldPassword: formData.oldPassword,
           newPassword: formData.newPassword
