@@ -50,11 +50,8 @@ const ChangePasswordModal = ({ onClose }) => {
     }
 
     try {
-      const config = {
+      const axiosConfig = {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
       };
 
       const response = await axios.put(
@@ -63,7 +60,7 @@ const ChangePasswordModal = ({ onClose }) => {
           oldPassword: formData.oldPassword,
           newPassword: formData.newPassword
         },
-        config
+        axiosConfig
       );
 
       if (response.data.success || response.status === 200) {
