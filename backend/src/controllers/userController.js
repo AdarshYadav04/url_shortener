@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { sanitizeError } from "../utils/sanitizeLog.js";
 
 export const getUserProfile = (req, res) => {
   if (!req.user) {
@@ -27,7 +28,8 @@ export const updateUserPassword = async(req, res) => {
     res.status(200).json({ success: true,message: 'Password updated successfully' });
 
   } catch (error) {
-    console.log(error);
+    // Sanitize error to prevent password leakage in logs
+    console.error('Password update error:', sanitizeError(error));
     res.status(500).json({ success: false, message: 'Error in updating password' });
   }
   

@@ -2,6 +2,7 @@ import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import validator from "validator";
 import CryptoJS from "crypto-js";
+import { sanitizeError } from "../utils/sanitizeLog.js";
 
 const isProduction = process.env.NODE_ENV === 'production';
 const COOKIE_OPTIONS = {
@@ -17,7 +18,7 @@ const registerUser = async (req, res) => {
   try {
     const exists = await userModel.findOne({ email });
     if (exists) {
-      return res.status(409).json({ success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
     if (!validator.isEmail(email)) {
@@ -39,7 +40,8 @@ const registerUser = async (req, res) => {
     res.status(201).json({ success: true, message: "User registered successfully" });
 
   } catch (error) {
-    console.log(error);
+    // Sanitize error to prevent password leakage in logs
+    console.error('Registration error:', sanitizeError(error));
     res.status(500).json({ success: false, message: "Error in creating user" });
   }
 };
@@ -65,7 +67,8 @@ const loginUser = async (req, res) => {
     res.status(200).json({ success: true, message: "Login successful" });
 
   } catch (error) {
-    console.log(error);
+    // Sanitize error to prevent password leakage in logs
+    console.error('Login error:', sanitizeError(error));
     res.status(500).json({ success: false, message: "Unable to authenticate you" });
   }
 };
