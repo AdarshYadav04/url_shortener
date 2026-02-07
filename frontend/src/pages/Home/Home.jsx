@@ -121,9 +121,10 @@ const Home = () => {
         { question: trimmed },
         { withCredentials: true }
       );
+      console.log(chatBaseUrl)
 
       // Extract the bot response from the API
-    
+      console.log(response)
       const botResponse = response.data?.answer || response.data?.response || response.data?.message || "I'm sorry, I couldn't process that request.";
 
       const botMessage = {
