@@ -115,14 +115,15 @@ const Home = () => {
     setChatLoading(true);
 
     try {
+      const chatBaseUrl = import.meta.env.CHAT_API_URL || '';
       const response = await axios.post(
-        'https://chat-q749.onrender.com/chat',
+        `${chatBaseUrl}/chat`,
         { question: trimmed },
-        
+        { withCredentials: true }
       );
 
       // Extract the bot response from the API
-      console.log(response);
+    
       const botResponse = response.data?.answer || response.data?.response || response.data?.message || "I'm sorry, I couldn't process that request.";
 
       const botMessage = {
