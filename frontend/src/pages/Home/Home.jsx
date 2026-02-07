@@ -115,7 +115,7 @@ const Home = () => {
     setChatLoading(true);
 
     try {
-      const chatBaseUrl = import.meta.env.CHAT_API_URL || '';
+      const chatBaseUrl = import.meta.env.CHAT_API_URL || 'https://chat-q749.onrender.com';
       const response = await axios.post(
         `${chatBaseUrl}/chat`,
         { question: trimmed },
