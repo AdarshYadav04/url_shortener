@@ -118,7 +118,7 @@ const Home = () => {
       const response = await axios.post(
         'https://chat-q749.onrender.com/chat',
         { question: trimmed },
-        { withCredentials: true }
+        
       );
 
       // Extract the bot response from the API
