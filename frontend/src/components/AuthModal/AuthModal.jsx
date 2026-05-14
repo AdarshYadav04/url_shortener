@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './AuthModal.css';
 import axios from 'axios';
+import { API_BASE } from '../../config/apiBase.js';
 
 const AuthModal = ({ mode, onClose, onSwitchMode }) => {
   const [formData, setFormData] = useState({
@@ -31,6 +32,12 @@ const AuthModal = ({ mode, onClose, onSwitchMode }) => {
     setError('');
     setLoading(true);
 
+    if (!API_BASE) {
+      setError('Set VITE_API_BASE_URL in your environment file.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const config = {
         withCredentials: true,
@@ -40,8 +47,8 @@ const AuthModal = ({ mode, onClose, onSwitchMode }) => {
       };
 
       const endpoint = mode === 'login'
-        ? 'https://short-ly-2njz.onrender.com/api/auth/login'
-        : 'https://short-ly-2njz.onrender.com/api/auth/register';
+        ? `${API_BASE}/api/auth/login`
+        : `${API_BASE}/api/auth/register`;
 
       const { data } = await axios.post(endpoint, formData, config);
 

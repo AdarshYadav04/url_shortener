@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UrlCard from '../../components/UrlCard/UrlCard.jsx';
+import { API_BASE } from '../../config/apiBase.js';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -12,15 +13,19 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!API_BASE) {
+        setLoading(false);
+        return;
+      }
       try {
         const axiosConfig = {
           withCredentials: true,
         };
 
-        const userRes = await axios.get('https://short-ly-2njz.onrender.com/api/user/profile', axiosConfig);
+        const userRes = await axios.get(`${API_BASE}/api/user/profile`, axiosConfig);
         setUser(userRes.data);
 
-        const dashboardRes = await axios.get('https://short-ly-2njz.onrender.com/api/url/dashboard', axiosConfig);
+        const dashboardRes = await axios.get(`${API_BASE}/api/url/dashboard`, axiosConfig);
         setStats({
           totalUrls: dashboardRes.data.totalLinks,
           totalClicks: dashboardRes.data.totalClicks,

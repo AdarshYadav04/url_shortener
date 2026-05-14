@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AuthModal from '../../components/AuthModal/AuthModal.jsx';
 import axios from 'axios';
+import { API_BASE } from '../../config/apiBase.js';
 import './Home.css';
 
 const Home = () => {
@@ -50,10 +51,15 @@ const Home = () => {
       return;
     }
 
+    if (!API_BASE) {
+      setError('App configuration is incomplete. Set VITE_API_BASE_URL in your environment.');
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await axios.post(
-        'https://short-ly-2njz.onrender.com/api/url/shorten',
+        `${API_BASE}/api/url/shorten`,
         { originalUrl },
         { withCredentials: true }
       );
@@ -114,17 +120,29 @@ const Home = () => {
     setChatMessage('');
     setChatLoading(true);
 
+    if (!API_BASE) {
+      const botMessage = {
+        id: timestamp + 1,
+        author: 'bot',
+        text: 'App configuration is incomplete. Set VITE_API_BASE_URL in your environment.',
+      };
+      setChatHistory((prev) => [...prev, botMessage]);
+      setChatLoading(false);
+      return;
+    }
+
     try {
-      const chatBaseUrl = import.meta.env.VITE_CHAT_API_URL || '';
       const response = await axios.post(
-        `${chatBaseUrl}/chat`,
+        `${API_BASE}/api/bot/chat`,
         { question: trimmed },
-        { withCredentials: true }
+        { withCredentials: true, timeout: 120000 }
       );
-      
-      // Extract the bot response from the API
-      
-      const botResponse = response.data?.answer || response.data?.response || response.data?.message || "I'm sorry, I couldn't process that request.";
+
+      const botResponse =
+        response.data?.answer ||
+        response.data?.response ||
+        response.data?.message ||
+        "I'm sorry, I couldn't process that request.";
 
       const botMessage = {
         id: timestamp + 1,
@@ -134,7 +152,16 @@ const Home = () => {
 
       setChatHistory((prev) => [...prev, botMessage]);
     } catch (err) {
-      const errorMessage = err.response?.data?.error || err.message || "Sorry, I encountered an error. Please try again.";
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        setShowAuthModal(true);
+        return;
+      }
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Sorry, I encountered an error. Please try again.';
       
       const botMessage = {
         id: timestamp + 1,

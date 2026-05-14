@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import { API_BASE } from '../config/apiBase.js';
 
 const Protected = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -7,8 +8,13 @@ const Protected = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!API_BASE) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
       try {
-        const res = await fetch('https://short-ly-2njz.onrender.com/api/user/profile', {
+        const res = await fetch(`${API_BASE}/api/user/profile`, {
           credentials: 'include',
         });
         if (res.ok) {

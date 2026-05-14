@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AuthModal from '../AuthModal/AuthModal.jsx';
 import ChangePasswordModal from '../ChangePasswordModal/ChangePasswordModal.jsx';
+import { API_BASE } from '../../config/apiBase.js';
 import './Navbar.css';
 const Navbar = () => {
   const { token,setToken } = useAuth(); 
@@ -19,8 +20,12 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!API_BASE) {
+        setUser(null);
+        return;
+      }
       try {
-        const res = await fetch('https://short-ly-2njz.onrender.com/api/user/profile', {
+        const res = await fetch(`${API_BASE}/api/user/profile`, {
           credentials: 'include'
         });
         if (res.ok) {
@@ -60,7 +65,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch('https://short-ly-2njz.onrender.com/api/auth/logout', {
+      if (!API_BASE) return;
+      await fetch(`${API_BASE}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { API_BASE } from '../../config/apiBase.js';
 import './ChangePasswordModal.css';
 
 const ChangePasswordModal = ({ onClose }) => {
@@ -47,12 +48,18 @@ const ChangePasswordModal = ({ onClose }) => {
     }
 
     try {
+      if (!API_BASE) {
+        setError('Set VITE_API_BASE_URL in your environment file.');
+        setLoading(false);
+        return;
+      }
+
       const axiosConfig = {
         withCredentials: true,
       };
 
       const response = await axios.put(
-        'https://short-ly-2njz.onrender.com/api/user/password',
+        `${API_BASE}/api/user/password`,
         {
           oldPassword: formData.oldPassword,
           newPassword: formData.newPassword

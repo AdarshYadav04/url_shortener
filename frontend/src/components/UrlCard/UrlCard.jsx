@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { API_BASE } from '../../config/apiBase.js';
 import './UrlCard.css';
 
 const UrlCard = ({ url,onDelete }) => {
@@ -7,8 +8,9 @@ const UrlCard = ({ url,onDelete }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleCopy = async () => {
+    if (!API_BASE) return;
     try {
-      await navigator.clipboard.writeText(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`);
+      await navigator.clipboard.writeText(`${API_BASE}/api/url/${url.shortId}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -17,16 +19,18 @@ const UrlCard = ({ url,onDelete }) => {
   };
 
   const handleVisit = () => {
-    window.open(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`, '_blank');
+    if (!API_BASE) return;
+    window.open(`${API_BASE}/api/url/${url.shortId}`, '_blank');
   };
 
   const handleDelete =async () => {
+    if (!API_BASE) return;
 
     try {
       const axiosConfig = {
         withCredentials: true,
       };
-      const res=await axios.delete(`https://short-ly-2njz.onrender.com/api/url/${url.shortId}`,axiosConfig)
+      const res=await axios.delete(`${API_BASE}/api/url/${url.shortId}`,axiosConfig)
       if (res.status === 200) {
         onDelete(url.shortId); 
         
