@@ -3,7 +3,7 @@ const PYTHON_API_URL = process.env.PYTHON_API_URL;
 const PYTHON_API_KEY = process.env.PYTHON_API_KEY;
 
 /** Upstream (RAG) request timeout — Render free tier cold starts can exceed 30s */
-const UPSTREAM_TIMEOUT_MS = Number(process.env.PYTHON_CHAT_TIMEOUT_MS) || 120_000;
+const UPSTREAM_TIMEOUT_MS = Number(process.env.PYTHON_CHAT_TIMEOUT_MS) || 60000;
 
 export const chatController = async (req, res) => {
   const { question } = req.body;
