@@ -116,7 +116,7 @@ const UrlCard = ({ url,onDelete }) => {
           <div className="top-countries">
             <span className="countries-label">Top locations:</span>
             <div className="countries-list">
-              {[...new Set(url.locations.slice(-5))].map((country) => (
+              {url.locations.map((country) => (
                 <span key={country} className="country-tag">{country}</span>
               ))}
             </div>

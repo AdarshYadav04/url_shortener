@@ -2,6 +2,27 @@ import urlModel from "../models/urlModel.js";
 import generateShortId from "../utils/generateShortId.js";
 import { getLocationFromIP } from "../utils/geoLocation.js";
 
+const countLocations = (clicks) => {
+  const counts = {};
+  for (const click of clicks) {
+    const location = click.location || "Unknown";
+    counts[location] = (counts[location] || 0) + 1;
+  }
+  return counts;
+};
+
+const rankedLocations = (counts, limit = 5) =>
+  Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([location]) => location);
+
+const rankedLocationsWithCounts = (counts, limit = 3) =>
+  Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([location, count]) => ({ location, count }));
+
 const shortenUrl=async(req,res)=>{
 
     try {
@@ -56,15 +77,32 @@ const getDashboardData=async(req,res)=>{
     const totalLinks = urls.length;
     const totalClicks = urls.reduce((sum, u) => sum + u.clicks.length, 0);
     const averageClicks = totalLinks ? (totalClicks / totalLinks).toFixed(2) : 0;
-    const allLinks = urls.map(u => ({
-      originalUrl: u.originalUrl,
-      shortId: u.shortId,
-      clickCount: u.clicks.length,
-      locations: [...new Set(u.clicks.map(c => c.location))],
-      createdAt: u.createdAt
-    }));
+    const globalLocationCounts = {};
+    const allLinks = urls.map((u) => {
+      const locationCounts = countLocations(u.clicks);
+      for (const [location, count] of Object.entries(locationCounts)) {
+        globalLocationCounts[location] =
+          (globalLocationCounts[location] || 0) + count;
+      }
+      return {
+        originalUrl: u.originalUrl,
+        shortId: u.shortId,
+        clickCount: u.clicks.length,
+        locationCounts,
+        locations: rankedLocations(locationCounts, 5),
+        createdAt: u.createdAt,
+      };
+    });
 
-    res.json({ totalLinks, totalClicks, averageClicks, links: allLinks });
+    const topLocations = rankedLocationsWithCounts(globalLocationCounts, 3);
+
+    res.json({
+      totalLinks,
+      totalClicks,
+      averageClicks,
+      topLocations,
+      links: allLinks,
+    });
   } catch (err) {
     console.error(err.stack);
     res.status(500).json({ error: 'Something went wrong' });

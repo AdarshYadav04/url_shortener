@@ -6,7 +6,12 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ totalUrls: 0, totalClicks: 0, topCountries: [], urls: [] });
+  const [stats, setStats] = useState({
+    totalUrls: 0,
+    totalClicks: 0,
+    topLocations: [],
+    urls: [],
+  });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [urlsPerPage] = useState(5);
@@ -29,7 +34,7 @@ const Dashboard = () => {
         setStats({
           totalUrls: dashboardRes.data.totalLinks,
           totalClicks: dashboardRes.data.totalClicks,
-          topCountries: getTopCountries(dashboardRes.data.links),
+          topLocations: dashboardRes.data.topLocations ?? [],
           urls: dashboardRes.data.links,
         });
       } catch (err) {
@@ -50,25 +55,22 @@ const Dashboard = () => {
       urls: updatedUrls,
       totalUrls: updatedUrls.length,
       totalClicks: updatedUrls.reduce((sum, url) => sum + url.clickCount, 0),
-      topCountries: getTopCountries(updatedUrls),
+      topLocations: mergeTopLocations(updatedUrls),
     };
   });
 };
 
-  
-
-  const getTopCountries = (links) => {
-    const countryMap = {};
+  const mergeTopLocations = (links) => {
+    const counts = {};
     links.forEach((link) => {
-      if (link.locations) {
-        link.locations.forEach((location) => {
-          countryMap[location] = (countryMap[location] || 0) + 1;
-        });
-      }
+      if (!link.locationCounts) return;
+      Object.entries(link.locationCounts).forEach(([location, count]) => {
+        counts[location] = (counts[location] || 0) + count;
+      });
     });
 
-    return Object.entries(countryMap)
-      .map(([country, count]) => ({ country, count }))
+    return Object.entries(counts)
+      .map(([location, count]) => ({ location, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
   };
@@ -107,7 +109,7 @@ const Dashboard = () => {
             value={stats.totalUrls > 0 ? Math.round(stats.totalClicks / stats.totalUrls) : 0}
             iconType="clock"
           />
-          <TopCountriesCard countries={stats.topCountries} />
+          <TopLocationCard locations={stats.topLocations} />
         </div>
 
         <div className="urls-section">
@@ -183,8 +185,10 @@ const StatCard = ({ label, value, iconType }) => (
   </div>
 );
 
-const TopCountriesCard = ({ countries }) => (
-  <div className="stat-card countries-card">
+const TopLocationCard = ({ locations }) => {
+  const top = locations[0];
+  return (
+  <div className="stat-card">
   <div className="stat-icon">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
@@ -193,33 +197,27 @@ const TopCountriesCard = ({ countries }) => (
     </svg>
   </div>
   <div className="stat-content">
-    <div className="stat-label">Top Country</div>
-    <div className="countries-list">
-      {countries.length > 0 ? (
-        <div className="country-item">
-          <span className="country-name">
-            {
-              countries.reduce((top, country) =>
-                country.count > top.count ? country : top
-              ).country
-            }
-          </span>
-          <span className="country-count">
-            {
-              countries.reduce((top, country) =>
-                country.count > top.count ? country : top
-              ).count
-            }
-          </span>
+    {top ? (
+      <>
+        <div className="stat-value stat-value--location" title={top.location}>
+          {top.location}
         </div>
-      ) : (
-        <span className="no-data">No data yet</span>
-      )}
-    </div>
+        <div className="stat-label">Top Location</div>
+        <p className="stat-meta">
+          {top.count} click{top.count === 1 ? '' : 's'}
+        </p>
+      </>
+    ) : (
+      <>
+        <div className="stat-value">—</div>
+        <div className="stat-label">Top Location</div>
+        <p className="stat-meta">No data yet</p>
+      </>
+    )}
   </div>
-</div>
-
-);
+  </div>
+  );
+};
 
 const EmptyState = () => (
   <div className="empty-state">
