@@ -98,13 +98,13 @@
   gap: 0.75rem;
 }
 
-.countries-list {
+.countries-card .countries-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.country-item {
+.countries-card .country-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,13 +113,13 @@
   border-radius: 0.5rem;
 }
 
-.country-name {
+.countries-card .country-name {
   font-weight: 500;
   color: var(--text-primary);
   font-size: 0.875rem;
 }
 
-.country-count {
+.countries-card .country-count {
   font-weight: 600;
   color: var(--primary-color);
   font-size: 0.875rem;
