@@ -16,11 +16,19 @@ import chatRouter from "./routes/chatRoute.js"
 // app config
 const app=express()
 
+const corsOrigins = process.env.CORS_ORIGINS
+  ?.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+if (!corsOrigins?.length) {
+  throw new Error("CORS_ORIGINS must contain at least one allowed origin")
+}
 
 //middleware
 app.use(express.json())
 app.use(helmet())
-app.use(cors({ origin: 'https://shortly-z5i6.onrender.com', credentials: true }))
+app.use(cors({ origin: corsOrigins, credentials: true }))
 app.use(morgan('dev'))
 app.use(cookieParser())
 
